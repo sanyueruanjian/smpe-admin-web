@@ -38,7 +38,7 @@
               class="filter-item"
               @keyup.enter.native="crud.toQuery"
             />
-            <date-range-picker v-model="query.createTime" class="date-item" />
+            <date-range-picker v-model="time" class="date-item" />
             <rrOperation />
           </div>
           <crudOperation show="" :permission="permission" />
@@ -190,6 +190,7 @@ export default {
       }
     }
     return {
+      time: '',
       height: document.documentElement.clientHeight - 180 + 'px;',
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
@@ -217,6 +218,12 @@ export default {
     ...mapGetters([
       'user'
     ])
+  },
+  watch: {
+    time: function(val) {
+      this.query.startTime = val[0]
+      this.query.endTime = val[1]
+    }
   },
   created() {
     this.crud.msg.add = '新增成功，默认密码：123456'
