@@ -12,7 +12,7 @@ export default {
     },
     valueFormat: {
       type: String,
-      default: 'yyyy-MM-dd HH:mm:ss'
+      default: 'timestamp'
     },
     defaultTime: {
       type: Array,
