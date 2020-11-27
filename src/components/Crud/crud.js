@@ -32,7 +32,7 @@ function CRUD(options) {
     // 重置表单
     defaultForm: () => {},
     // 排序规则，默认 id 降序， 支持多字段排序 ['id,desc', 'createTime,asc']
-    sort: ['id,desc'],
+    sort: [{ 'column': 'id', 'asc': 'false' }],
     // 等待时间
     time: 50,
     // CRUD Method
@@ -131,14 +131,16 @@ function CRUD(options) {
       return new Promise((resolve, reject) => {
         crud.loading = true
         // 请求数据
-        initData(crud.url, crud.getQueryParams()).then(data => {
+        initData(crud.url, crud.getQueryParams()).then(res => {
+          console.log(123456)
+          console.log(res)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
             table.store.states.lazyTreeNodeMap = {}
           }
-          crud.page.total = data.totalElements
-          crud.data = data.content
+          crud.page.total = res.data.pages === undefined ? 0 : res.data.size
+          crud.data = res.data.pages === undefined ? res.data : res.data.records
           crud.resetDataStatus()
           // time 毫秒后显示表格
           setTimeout(() => {
@@ -348,9 +350,9 @@ function CRUD(options) {
         if (crud.params[item] === null || crud.params[item] === '') crud.params[item] = undefined
       })
       return {
-        page: crud.page.page - 1,
+        current: crud.page.page,
         size: crud.page.size,
-        sort: crud.sort,
+        orders: JSON.stringify(crud.sort),
         ...crud.query,
         ...crud.params
       }

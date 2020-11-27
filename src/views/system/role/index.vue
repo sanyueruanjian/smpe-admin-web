@@ -136,7 +136,7 @@ export default {
   name: 'Role',
   components: { Treeselect, pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '角色', url: 'api/roles', sort: 'level,asc', crudMethod: { ...crudRoles }})
+    return CRUD({ title: '角色', url: 'api/roles', sort: [{ 'column': 'level', 'asc': 'true' }], crudMethod: { ...crudRoles }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -169,7 +169,7 @@ export default {
     getMenuDatas(node, resolve) {
       setTimeout(() => {
         getMenusTree(node.data.id ? node.data.id : 0).then(res => {
-          resolve(res)
+          resolve(res.data)
         })
       }, 100)
     },

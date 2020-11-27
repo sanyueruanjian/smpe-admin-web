@@ -190,6 +190,9 @@ export default {
       }
     }
   },
+  mounted() {
+    console.log(this.crud)
+  },
   methods: {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {

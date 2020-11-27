@@ -123,7 +123,7 @@ export default {
       const params = { pid: tree.id }
       setTimeout(() => {
         crudDept.getDepts(params).then(res => {
-          resolve(res.content)
+          resolve(res.data.pages === undefined ? res.data : res.data.records)
         })
       }, 100)
     },

@@ -58,7 +58,7 @@ export default {
     return CRUD({
       title: '岗位',
       url: 'api/job',
-      sort: ['jobSort,asc', 'id,desc'],
+      sort: [{ 'column': 'job_sort', 'asc': 'true' }, { 'column': 'id', 'asc': 'false' }],
       crudMethod: { ...crudJob }
     })
   },
