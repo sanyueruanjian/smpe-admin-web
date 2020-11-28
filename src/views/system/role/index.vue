@@ -31,7 +31,7 @@
         </el-form-item>
         <el-form-item v-if="form.dataScope === '自定义'" label="数据权限" prop="depts">
           <treeselect
-            v-model="form.depts"
+            v-model="deptDatas"
             :load-options="loadDepts"
             :options="depts"
             multiple
@@ -120,7 +120,7 @@
 <script>
 import crudRoles from '@/api/system/role'
 import { getDepts, getDeptSuperior } from '@/api/system/dept'
-import { getMenusTree } from '@/api/system/menu'
+import { getMenusTree, getChild } from '@/api/system/menu'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
@@ -144,7 +144,7 @@ export default {
       defaultProps: { children: 'children', label: 'label', isLeaf: 'leaf' },
       dateScopes: ['全部', '本级', '自定义'], level: 3,
       currentId: 0, menuLoading: false, showButton: false,
-      menus: [], menuIds: [], depts: [],
+      menus: [], menuIds: [], depts: [], deptDatas: [],
       permission: {
         add: ['admin', 'roles:add'],
         edit: ['admin', 'roles:edit'],
@@ -161,8 +161,8 @@ export default {
     }
   },
   created() {
-    crudRoles.getLevel().then(data => {
-      this.level = data.level
+    crudRoles.getLevel().then(res => {
+      this.level = res.data.level
     })
   },
   methods: {
@@ -176,24 +176,24 @@ export default {
     [CRUD.HOOK.afterRefresh]() {
       this.$refs.menu.setCheckedKeys([])
     },
+    // 新增前初始化部门信息
+    [CRUD.HOOK.beforeToAdd]() {
+      this.deptDatas = []
+    },
     // 编辑前
     [CRUD.HOOK.beforeToEdit](crud, form) {
+      this.deptDatas = []
       if (form.dataScope === '自定义') {
-        if (form.id == null) {
-          this.getDepts()
-        } else {
-          this.getSupDepts(form.depts)
-        }
+        this.getSupDepts(form.depts)
       }
-      const depts = []
+      const _this = this
       form.depts.forEach(function(dept) {
-        depts.push(dept.id)
+        _this.deptDatas.push(dept.id)
       })
-      form.depts = depts
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
-      if (crud.form.dataScope === '自定义' && crud.form.depts.length === 0) {
+      if (crud.form.dataScope === '自定义' && this.deptDatas.length === 0) {
         this.$message({
           message: '自定义数据权限不能为空',
           type: 'warning'
@@ -201,9 +201,8 @@ export default {
         return false
       } else if (crud.form.dataScope === '自定义') {
         const depts = []
-        crud.form.depts.forEach(function(data) {
-          const dept = { id: data }
-          depts.push(dept)
+        this.deptDatas.forEach(function(data) {
+          depts.push(data)
         })
         crud.form.depts = depts
       } else {
@@ -241,13 +240,27 @@ export default {
       }
     },
     menuChange(menu) {
-      // 判断是否在 menuIds 中，如果存在则删除，否则添加
-      const index = this.menuIds.indexOf(menu.id)
-      if (index !== -1) {
-        this.menuIds.splice(index, 1)
-      } else {
-        this.menuIds.push(menu.id)
-      }
+      // 获取该节点的所有子节点，id 包含自身
+      getChild(menu.id).then(res => {
+        const childIds = res.data
+        // 判断是否在 menuIds 中，如果存在则删除，否则添加
+        if (this.menuIds.indexOf(menu.id) !== -1) {
+          for (let i = 0; i < childIds.length; i++) {
+            const index = this.menuIds.indexOf(childIds[i])
+            if (index !== -1) {
+              this.menuIds.splice(index, 1)
+            }
+          }
+        } else {
+          for (let i = 0; i < childIds.length; i++) {
+            const index = this.menuIds.indexOf(childIds[i])
+            if (index === -1) {
+              this.menuIds.push(childIds[i])
+            }
+          }
+        }
+        this.$refs.menu.setCheckedKeys(this.menuIds)
+      })
     },
     // 保存菜单
     saveMenu() {
@@ -255,8 +268,7 @@ export default {
       const role = { id: this.currentId, menus: [] }
       // 得到已选中的 key 值
       this.menuIds.forEach(function(id) {
-        const menu = { id: id }
-        role.menus.push(menu)
+        role.menus.push(id)
       })
       crudRoles.editMenu(role).then(() => {
         this.crud.notify('保存成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
@@ -281,8 +293,8 @@ export default {
     },
     // 获取部门数据
     getDepts() {
-      getDepts({ enabled: true }).then(res => {
-        this.depts = res.content.map(function(obj) {
+      getDepts({ enabled: true, pid: 0 }).then(res => {
+        this.depts = res.data.records.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
           }
@@ -296,9 +308,9 @@ export default {
         ids.push(dept.id)
       })
       getDeptSuperior(ids).then(res => {
-        const date = res.content
-        this.buildDepts(date)
-        this.depts = date
+        const data = res.data.records
+        this.buildDepts(data)
+        this.depts = data
       })
     },
     buildDepts(depts) {
@@ -315,7 +327,7 @@ export default {
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         getDepts({ enabled: true, pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
+          parentNode.children = res.data.records.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
             }
