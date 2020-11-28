@@ -170,7 +170,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 let userRoles = []
 let userJobs = []
-const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], dept: { id: null }, phone: null }
+const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], dept: [{ id: null }], phone: null }
 export default {
   name: 'User',
   components: { Treeselect, crudOperation, rrOperation, udOperation, pagination, DateRangePicker },
@@ -296,14 +296,14 @@ export default {
       form.roles.forEach(function(role, index) {
         roles.push(role.id)
         // 初始化编辑时候的角色
-        const rol = { id: role.id }
-        userRoles.push(rol)
+        // const rol = { id: role.id }
+        userRoles.push(role.id)
       })
       form.jobs.forEach(function(job, index) {
         jobs.push(job.id)
         // 初始化编辑时候的岗位
-        const data = { id: job.id }
-        userJobs.push(data)
+        // const data = { id: job.id }
+        userJobs.push(job.id)
       })
       form.roles = roles
       form.jobs = jobs
@@ -347,9 +347,9 @@ export default {
       setTimeout(() => {
         getDepts(params).then(res => {
           if (resolve) {
-            resolve(res.data)
+            resolve(res.data.records)
           } else {
-            this.deptDatas = res.data
+            this.deptDatas = res.data.records
           }
         })
       }, 100)
@@ -409,19 +409,19 @@ export default {
     // 获取弹窗内角色数据
     getRoles() {
       getAll().then(res => {
-        this.roles = res
+        this.roles = res.data
       }).catch(() => { })
     },
     // 获取弹窗内岗位数据
     getJobs() {
       getAllJob().then(res => {
-        this.jobs = res.data
+        this.jobs = res.data.records
       }).catch(() => { })
     },
     // 获取权限级别
     getRoleLevel() {
       getLevel().then(res => {
-        this.level = res.level
+        this.level = res.data.level
       }).catch(() => { })
     },
     checkboxT(row, rowIndex) {
