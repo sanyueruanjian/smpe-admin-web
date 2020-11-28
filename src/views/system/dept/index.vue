@@ -97,7 +97,7 @@ export default {
   name: 'Dept',
   components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '部门', url: 'api/dept', crudMethod: { ...crudDept }})
+    return CRUD({ title: '部门', url: 'api/dept', sort: [{ 'column': 'dept_sort', 'asc': 'true' }], crudMethod: { ...crudDept }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -143,7 +143,7 @@ export default {
     },
     getSupDepts(id) {
       crudDept.getDeptSuperior(id).then(res => {
-        const date = res.content
+        const date = res.data
         this.buildDepts(date)
         this.depts = date
       })
@@ -160,7 +160,9 @@ export default {
     },
     getDepts() {
       crudDept.getDepts({ enabled: true }).then(res => {
-        this.depts = res.content.map(function(obj) {
+        console.log(9999)
+        console.log(res)
+        this.depts = res.data.records.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
           }
@@ -172,7 +174,7 @@ export default {
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         crudDept.getDepts({ enabled: true, pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
+          parentNode.children = res.data.records.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
             }

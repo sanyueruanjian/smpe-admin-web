@@ -169,7 +169,7 @@ export default {
   name: 'Menu',
   components: { Treeselect, IconSelect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '菜单', url: 'api/menus', crudMethod: { ...crudMenu }})
+    return CRUD({ title: '菜单', url: 'api/menus', params: { pid: 0 }, crudMethod: { ...crudMenu }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -190,9 +190,6 @@ export default {
       }
     }
   },
-  mounted() {
-    console.log(this.crud)
-  },
   methods: {
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
@@ -210,13 +207,13 @@ export default {
       const params = { pid: tree.id }
       setTimeout(() => {
         crudMenu.getMenus(params).then(res => {
-          resolve(res.content)
+          resolve(res.data)
         })
       }, 100)
     },
     getSupDepts(id) {
       crudMenu.getMenuSuperior(id).then(res => {
-        const children = res.map(function(obj) {
+        const children = res.data.map(function(obj) {
           if (!obj.leaf && !obj.children) {
             obj.children = null
           }
@@ -228,7 +225,7 @@ export default {
     loadMenus({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         crudMenu.getMenusTree(parentNode.id).then(res => {
-          parentNode.children = res.map(function(obj) {
+          parentNode.children = res.data.map(function(obj) {
             if (!obj.leaf) {
               obj.children = null
             }

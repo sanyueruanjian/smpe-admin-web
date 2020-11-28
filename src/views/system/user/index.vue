@@ -347,16 +347,16 @@ export default {
       setTimeout(() => {
         getDepts(params).then(res => {
           if (resolve) {
-            resolve(res.content)
+            resolve(res.data)
           } else {
-            this.deptDatas = res.content
+            this.deptDatas = res.data
           }
         })
       }, 100)
     },
     getDepts() {
       getDepts().then(res => {
-        this.depts = res.content.map(function(obj) {
+        this.depts = res.data.forEach(obj => {
           if (obj.hasChildren) {
             obj.children = null
           }
@@ -366,7 +366,7 @@ export default {
     },
     getSupDepts(deptId) {
       getDeptSuperior(deptId).then(res => {
-        const date = res.content
+        const date = res.data
         this.buildDepts(date)
         this.depts = date
       })
@@ -385,7 +385,7 @@ export default {
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         getDepts({ pid: parentNode.id }).then(res => {
-          parentNode.children = res.content.map(function(obj) {
+          parentNode.children = res.data.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
             }
@@ -415,7 +415,7 @@ export default {
     // 获取弹窗内岗位数据
     getJobs() {
       getAllJob().then(res => {
-        this.jobs = res.content
+        this.jobs = res.data
       }).catch(() => { })
     },
     // 获取权限级别
