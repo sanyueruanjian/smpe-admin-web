@@ -159,7 +159,7 @@ export default {
       })
     },
     getDepts() {
-      crudDept.getDepts({ enabled: true }).then(res => {
+      crudDept.getDepts({ enabled: true, pid: 0 }).then(res => {
         console.log(9999)
         console.log(res)
         this.depts = res.data.records.map(function(obj) {

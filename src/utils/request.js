@@ -38,6 +38,12 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
+      if (response.data.code === 400) {
+        Notification.error({
+          title: response.data.message
+        })
+        return Promise.reject('error')
+      }
       return response.data
     }
   },
