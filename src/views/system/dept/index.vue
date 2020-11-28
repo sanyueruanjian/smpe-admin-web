@@ -97,7 +97,7 @@ export default {
   name: 'Dept',
   components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '部门', url: 'api/dept', sort: [{ 'column': 'dept_sort', 'asc': 'true' }], crudMethod: { ...crudDept }})
+    return CRUD({ title: '部门', url: 'api/dept', sort: [{ 'column': 'dept_sort', 'asc': 'true' }], params: { pid: 0 }, crudMethod: { ...crudDept }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
