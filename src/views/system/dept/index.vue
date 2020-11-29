@@ -129,6 +129,10 @@ export default {
     },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
+      console.log(form)
+      if (form.pid === 0) {
+        form.pid = null
+      }
       if (form.pid !== null) {
         form.isTop = '0'
       } else if (form.id !== null) {
@@ -160,8 +164,6 @@ export default {
     },
     getDepts() {
       crudDept.getDepts({ enabled: true, pid: 0 }).then(res => {
-        console.log(9999)
-        console.log(res)
         this.depts = res.data.records.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
@@ -196,7 +198,7 @@ export default {
         return false
       }
       if (this.form.isTop === '1') {
-        this.form.pid = null
+        this.form.pid = 0
       }
       return true
     },

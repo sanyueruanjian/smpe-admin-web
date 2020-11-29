@@ -38,17 +38,24 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
-      if (response.data.code === 400) {
+      if (response.data.code !== 0 && response.data.code !== 401 && response.data.code !== 403) {
         Notification.error({
           title: response.data.message
         })
         return Promise.reject('error')
+      } else if (response.data.code === 401) {
+        store.dispatch('LogOut').then(() => {
+          // 用户登录界面提示
+          Cookies.set('point', 401)
+          location.reload()
+        })
+      } else if (response.data.code === 403) {
+        router.push({ path: '/401' })
       }
       return response.data
     }
   },
   error => {
-    console.log(error)
     let code = 0
     try {
       code = error.response.data.status
