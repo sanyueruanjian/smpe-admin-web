@@ -308,7 +308,7 @@ export default {
         ids.push(dept.id)
       })
       getDeptSuperior(ids).then(res => {
-        const data = res.data.records
+        const data = res.data
         this.buildDepts(data)
         this.depts = data
       })
