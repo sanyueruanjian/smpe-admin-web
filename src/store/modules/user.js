@@ -47,8 +47,8 @@ const user = {
     GetInfo({ commit }) {
       return new Promise((resolve, reject) => {
         getInfo().then(res => {
-          setUserInfo(res, commit)
-          resolve(res)
+          setUserInfo(res.data, commit)
+          resolve(res.data)
         }).catch(error => {
           reject(error)
         })
