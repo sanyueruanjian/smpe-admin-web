@@ -38,7 +38,7 @@
               class="filter-item"
               @keyup.enter.native="crud.toQuery"
             />
-            <date-range-picker v-model="time" class="date-item" />
+            <date-range-picker v-model="query.createTime" class="date-item" />
             <rrOperation />
           </div>
           <crudOperation show="" :permission="permission" />
@@ -51,7 +51,7 @@
             </el-form-item>
             <el-form-item label="部门" prop="dept.id">
               <treeselect
-                v-model="form.dept.id"
+                v-model="form.deptId"
                 :options="depts"
                 :load-options="loadDepts"
                 style="width: 178px"
@@ -170,7 +170,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 let userRoles = []
 let userJobs = []
-const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], dept: { id: null }, phone: null }
+const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], deptId: null, phone: null }
 export default {
   name: 'User',
   components: { Treeselect, crudOperation, rrOperation, udOperation, pagination, DateRangePicker },
@@ -190,7 +190,6 @@ export default {
       }
     }
     return {
-      time: '',
       height: document.documentElement.clientHeight - 180 + 'px;',
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
@@ -218,12 +217,6 @@ export default {
     ...mapGetters([
       'user'
     ])
-  },
-  watch: {
-    time: function(val) {
-      this.query.startTime = val[0]
-      this.query.endTime = val[1]
-    }
   },
   created() {
     this.crud.msg.add = '新增成功，默认密码：123456'
@@ -356,7 +349,7 @@ export default {
     },
     getDepts() {
       getDepts().then(res => {
-        this.depts = res.data.forEach(obj => {
+        this.depts = res.data.records.map(obj => {
           if (obj.hasChildren) {
             obj.children = null
           }
@@ -366,9 +359,9 @@ export default {
     },
     getSupDepts(deptId) {
       getDeptSuperior(deptId).then(res => {
-        const date = res.data
-        this.buildDepts(date)
-        this.depts = date
+        const data = res.data
+        this.buildDepts(data)
+        this.depts = data
       })
     },
     buildDepts(depts) {
@@ -399,10 +392,12 @@ export default {
     },
     // 切换部门
     handleNodeClick(data) {
-      if (data.pid === 0) {
+      if (data.pid === null) {
         this.query.deptId = null
       } else {
         this.query.deptId = data.id
+        // 点击切换部门之后把部门的名字显示到框内
+        this.deptName = data.name
       }
       this.crud.toQuery()
     },
