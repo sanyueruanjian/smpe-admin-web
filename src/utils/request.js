@@ -48,6 +48,7 @@ service.interceptors.response.use(
     }
   },
   error => {
+    console.log(error)
     let code = 0
     try {
       code = error.response.data.status
