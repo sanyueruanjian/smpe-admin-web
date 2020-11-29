@@ -238,15 +238,15 @@ export default {
     changeRole(value) {
       userRoles = []
       value.forEach(function(data, index) {
-        const role = { id: data }
-        userRoles.push(role)
+        // const role = { id: data }
+        userRoles.push(data)
       })
     },
     changeJob(value) {
       userJobs = []
       value.forEach(function(data, index) {
-        const job = { id: data }
-        userJobs.push(job)
+        // const job = { id: data }
+        userJobs.push(data)
       })
     },
     [CRUD.HOOK.afterAddError](crud) {
@@ -385,7 +385,7 @@ export default {
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
         getDepts({ pid: parentNode.id }).then(res => {
-          parentNode.children = res.data.map(function(obj) {
+          parentNode.children = res.data.records.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
             }
