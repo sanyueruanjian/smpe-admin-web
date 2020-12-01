@@ -82,7 +82,6 @@ export const logOut = (commit) => {
 }
 
 export const setUserInfo = (res, commit) => {
-  console.log(res, 11)
   // 如果没有任何权限，则赋予一个默认的权限，避免请求死循环
   if (res.roles.length === 0) {
     commit('SET_ROLES', ['ROLE_SYSTEM_DEFAULT'])

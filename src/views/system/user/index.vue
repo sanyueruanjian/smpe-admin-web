@@ -281,7 +281,7 @@ export default {
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
-      this.getJobs(this.form.dept.id)
+      this.getJobs(this.form.deptId)
       userRoles = []
       userJobs = []
       const roles = []
@@ -303,7 +303,7 @@ export default {
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
-      if (!crud.form.dept.id) {
+      if (!crud.form.deptId) {
         this.$message({
           message: '部门不能为空',
           type: 'warning'

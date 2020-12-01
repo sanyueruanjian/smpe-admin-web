@@ -449,8 +449,6 @@ export default {
   created() {
     const _this = this
     getMenu().then((res) => {
-      console.log(12312313)
-      console.log(res)
       if (res.data == null) {
         _this.tabbar = {
           'button': [

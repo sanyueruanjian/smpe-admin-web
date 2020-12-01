@@ -129,7 +129,6 @@ export default {
     },
     // 新增与编辑前做的操作
     [CRUD.HOOK.afterToCU](crud, form) {
-      console.log(form)
       if (form.pid === 0) {
         form.pid = null
       }
