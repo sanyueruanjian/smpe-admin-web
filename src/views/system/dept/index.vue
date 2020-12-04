@@ -97,7 +97,7 @@ export default {
   name: 'Dept',
   components: { Treeselect, crudOperation, rrOperation, udOperation, DateRangePicker },
   cruds() {
-    return CRUD({ title: '部门', url: 'api/dept', sort: [{ 'column': 'dept_sort', 'asc': 'true' }], params: { pid: 0 }, crudMethod: { ...crudDept }})
+    return CRUD({ title: '部门', url: 'api/dept', sort: [{ 'column': 'dept_sort', 'asc': 'true' }], crudMethod: { ...crudDept }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -162,7 +162,7 @@ export default {
       })
     },
     getDepts() {
-      crudDept.getDepts({ enabled: true, pid: 0 }).then(res => {
+      crudDept.getDepts({ enabled: true }).then(res => {
         this.depts = res.data.records.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
