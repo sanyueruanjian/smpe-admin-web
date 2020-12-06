@@ -38,12 +38,7 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
-      if (response.data.code !== 0 && response.data.code !== 401 && response.data.code !== 403) {
-        Notification.error({
-          title: response.data.message
-        })
-        return Promise.reject('error')
-      } else if (response.data.code === 401) {
+      if (response.data.code === 401) {
         store.dispatch('LogOut').then(() => {
           // 用户登录界面提示
           Cookies.set('point', 401)
@@ -51,8 +46,19 @@ service.interceptors.response.use(
         })
       } else if (response.data.code === 403) {
         router.push({ path: '/401' })
+      } else if (response.data.code === 500) {
+        Notification.error({
+          title: '服务器异常',
+          duration: 5000
+        })
+      } else if (response.data.code === 0) {
+        return response.data
+      } else {
+        Notification.error({
+          title: response.data.message
+        })
       }
-      return response.data
+      return Promise.reject('error')
     }
   },
   error => {
