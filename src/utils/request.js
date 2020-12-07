@@ -38,30 +38,17 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
-      if (response.data.code === 401) {
-        store.dispatch('LogOut').then(() => {
-          // 用户登录界面提示
-          Cookies.set('point', 401)
-          location.reload()
-        })
-      } else if (response.data.code === 403) {
-        router.push({ path: '/401' })
-      } else if (response.data.code === 500) {
-        Notification.error({
-          title: '服务器异常',
-          duration: 5000
-        })
-      } else if (response.data.code === 0) {
-        return response.data
-      } else {
+      if (response.data.code !== 0) {
         Notification.error({
           title: response.data.message
         })
+        return Promise.reject('error')
       }
-      return Promise.reject('error')
+      return response.data
     }
   },
   error => {
+    console.log(error)
     let code = 0
     try {
       code = error.response.data.status
@@ -74,6 +61,7 @@ service.interceptors.response.use(
         return Promise.reject(error)
       }
     }
+    console.log(code)
     if (code) {
       if (code === 401) {
         store.dispatch('LogOut').then(() => {
@@ -94,7 +82,7 @@ service.interceptors.response.use(
       }
     } else {
       Notification.error({
-        title: '接口请求失败',
+        title: '服务器异常,请重试!',
         duration: 5000
       })
     }
