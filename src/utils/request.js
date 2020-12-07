@@ -48,7 +48,6 @@ service.interceptors.response.use(
     }
   },
   error => {
-    console.log(error)
     let code = 0
     try {
       code = error.response.data.status
@@ -61,7 +60,6 @@ service.interceptors.response.use(
         return Promise.reject(error)
       }
     }
-    console.log(code)
     if (code) {
       if (code === 401) {
         store.dispatch('LogOut').then(() => {
