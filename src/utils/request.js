@@ -38,19 +38,11 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
-      if (response.data.code !== 0 && response.data.code !== 401 && response.data.code !== 403) {
+      if (response.data.code !== 0) {
         Notification.error({
           title: response.data.message
         })
         return Promise.reject('error')
-      } else if (response.data.code === 401) {
-        store.dispatch('LogOut').then(() => {
-          // 用户登录界面提示
-          Cookies.set('point', 401)
-          location.reload()
-        })
-      } else if (response.data.code === 403) {
-        router.push({ path: '/401' })
       }
       return response.data
     }
@@ -88,7 +80,7 @@ service.interceptors.response.use(
       }
     } else {
       Notification.error({
-        title: '接口请求失败',
+        title: '服务器异常,请重试!',
         duration: 5000
       })
     }
