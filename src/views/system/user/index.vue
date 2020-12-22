@@ -117,8 +117,8 @@
             </el-form-item>
             <el-form-item label="性别">
               <el-radio-group v-model="form.gender" style="margin-bottom: 0;">
-                <el-radio label="0">男</el-radio>
-                <el-radio label="1">女</el-radio>
+                <el-radio label="false">男</el-radio>
+                <el-radio label="true">女</el-radio>
               </el-radio-group>
             </el-form-item>
             <el-form-item label="状态">
@@ -145,7 +145,7 @@
           <el-table-column :show-overflow-tooltip="true" prop="nickName" label="昵称" />
           <el-table-column prop="gender" label="性别">
             <template slot-scope="scope">
-              <div>{{ scope.row.gender == 0 ? "男" : "女" }}</div>
+              <div>{{ scope.row.gender ? "女" : "男" }}</div>
             </template>
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
@@ -211,7 +211,7 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 let userRoles = []
 let userJobs = []
-const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], enabled: 'true', deptId: null, phone: null }
+const defaultForm = { id: null, username: null, nickName: null, gender: 'false', roles: [], jobs: [], enabled: 'true', deptId: null, phone: null }
 export default {
   name: 'User',
   components: { Treeselect, crudOperation, rrOperation, udOperation, pagination, DateRangePicker },
@@ -327,6 +327,7 @@ export default {
       }
       this.getRoleLevel()
       this.getJobs()
+      form.gender = form.gender.toString()
       form.enabled = form.enabled.toString()
     },
     // 打开编辑弹窗前做的操作
@@ -466,6 +467,19 @@ export default {
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
+        // 重置数据
+        data.enabled = data.enabled.toString()
+        data.gender = data.gender.toString()
+        const roles = []
+        const jobs = []
+        data.roles.forEach(function(role, index) {
+          roles.push(role.id)
+        })
+        data.jobs.forEach(function(job, index) {
+          jobs.push(job.id)
+        })
+        data.roles = roles
+        data.jobs = jobs
         crudUser.edit(data).then(res => {
           this.crud.notify(this.getUserStatusLabel(val) + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
           this.crud.toQuery()
