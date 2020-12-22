@@ -480,7 +480,6 @@ export default {
         })
         data.roles = roles
         data.jobs = jobs
-        console.log(data)
         crudUser.edit(data).then(res => {
           this.crud.notify(this.getUserStatusLabel(val) + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
           this.crud.toQuery()
