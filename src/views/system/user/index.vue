@@ -39,6 +39,22 @@
               @keyup.enter.native="crud.toQuery"
             />
             <date-range-picker v-model="query.createTime" class="date-item" />
+            <el-select
+              v-model="query.enabled"
+              clearable
+              size="small"
+              placeholder="状态"
+              class="filter-item"
+              style="width: 90px"
+              @change="crud.toQuery"
+            >
+              <el-option
+                v-for="item in enabledTypeOptions"
+                :key="item.key"
+                :label="item.display_name"
+                :value="item.key"
+              />
+            </el-select>
             <rrOperation />
           </div>
           <crudOperation show="" :permission="permission" />
@@ -101,11 +117,21 @@
             </el-form-item>
             <el-form-item label="性别">
               <el-radio-group v-model="form.gender" style="margin-bottom: 0;">
-                <el-radio label="男">男</el-radio>
-                <el-radio label="女">女</el-radio>
+                <el-radio label="0">男</el-radio>
+                <el-radio label="1">女</el-radio>
               </el-radio-group>
             </el-form-item>
-
+            <el-form-item label="状态">
+              <el-radio-group v-model="form.enabled" :disabled="form.id === user.id">
+                <el-radio
+                  v-for="item in user_status"
+                  :key="item.id"
+                  :label="item.value"
+                >
+                  {{ item.label }}
+                </el-radio>
+              </el-radio-group>
+            </el-form-item>
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button type="text" @click="crud.cancelCU">取消</el-button>
@@ -117,11 +143,26 @@
           <el-table-column :selectable="checkboxT" type="selection" width="55" />
           <el-table-column :show-overflow-tooltip="true" prop="username" label="用户名" />
           <el-table-column :show-overflow-tooltip="true" prop="nickName" label="昵称" />
-          <el-table-column prop="gender" label="性别" />
+          <el-table-column prop="gender" label="性别">
+            <template slot-scope="scope">
+              <div>{{ scope.row.gender == 0 ? "男" : "女" }}</div>
+            </template>
+          </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
           <el-table-column :show-overflow-tooltip="true" prop="dept" label="部门">
             <template slot-scope="scope">
               <div>{{ scope.row.dept.name }}</div>
+            </template>
+          </el-table-column>
+          <el-table-column label="状态" align="center" prop="enabled">
+            <template slot-scope="scope">
+              <el-switch
+                v-model="scope.row.enabled"
+                :disabled="user.id === scope.row.id"
+                active-color="#409EFF"
+                inactive-color="#F56C6C"
+                @change="changeEnabled(scope.row, scope.row.enabled)"
+              />
             </template>
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="createTime" width="135" label="创建日期">
@@ -170,12 +211,12 @@ import '@riophae/vue-treeselect/dist/vue-treeselect.css'
 import { LOAD_CHILDREN_OPTIONS } from '@riophae/vue-treeselect'
 let userRoles = []
 let userJobs = []
-const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], deptId: null, phone: null }
+const defaultForm = { id: null, username: null, nickName: null, gender: '男', roles: [], jobs: [], enabled: 'true', deptId: null, phone: null }
 export default {
   name: 'User',
   components: { Treeselect, crudOperation, rrOperation, udOperation, pagination, DateRangePicker },
   cruds() {
-    return CRUD({ title: '用户', url: 'api/users', crudMethod: { ...crudUser }})
+    return CRUD({ title: '用户', url: 'api/users', crudMethod: { ...crudUser }, query: { enabled: 'true' }})
   },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   data() {
@@ -210,7 +251,15 @@ export default {
         phone: [
           { required: true, trigger: 'blur', validator: validPhone }
         ]
-      }
+      },
+      user_status: [
+        { id: 1, label: '激活', value: 'true' },
+        { id: 2, label: '禁用', value: 'false' }
+      ],
+      enabledTypeOptions: [
+        { key: 'true', display_name: '激活' },
+        { key: 'false', display_name: '锁定' }
+      ]
     }
   },
   computed: {
@@ -278,9 +327,11 @@ export default {
       }
       this.getRoleLevel()
       this.getJobs()
+      form.enabled = form.enabled.toString()
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
+      console.log(form)
       this.getJobs(this.form.deptId)
       userRoles = []
       userJobs = []
@@ -400,6 +451,30 @@ export default {
         this.deptName = data.name
       }
       this.crud.toQuery()
+    },
+    getUserStatusLabel(val) {
+      for (let i = 0; i < this.user_status.length; i++) {
+        if (this.user_status[i].value === val.toString()) {
+          return this.user_status[i].label
+        }
+      }
+    },
+    // 改变状态
+    changeEnabled(data, val) {
+      this.$confirm('此操作将 "' + this.getUserStatusLabel(val) + '" ' + data.username + ', 是否继续？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        crudUser.edit(data).then(res => {
+          this.crud.notify(this.getUserStatusLabel(val) + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
+          this.crud.toQuery()
+        }).catch(() => {
+          data.enabled = !data.enabled
+        })
+      }).catch(() => {
+        data.enabled = !data.enabled
+      })
     },
     // 获取弹窗内角色数据
     getRoles() {
