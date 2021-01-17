@@ -9,8 +9,7 @@ export function initData(url, params) {
 }
 
 export function download(url, params) {
-  // console.log(url,"2")
-  // console.log(params,"2")
+  console.log(url,"2")
   return request({
     url: url + '?' + qs.stringify(params, { indices: false }),
     method: 'get',

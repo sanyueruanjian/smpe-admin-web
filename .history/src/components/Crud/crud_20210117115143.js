@@ -331,7 +331,7 @@ function CRUD(options) {
      */
     doExport() {
       // console.log("sadsd")
-      crud.downloadLoading = true
+      crud.downloadLoading = true  
       // console.log(download, "1")
       download(crud.url + '/download', crud.getQueryParams()).then(result => {
         // console.log("sadsd111111,3")
