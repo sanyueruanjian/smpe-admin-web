@@ -38,7 +38,10 @@ service.interceptors.response.use(
       })
       return Promise.reject('error')
     } else {
-      if (response.data.code !== 0) {
+      // 如果为undefined 说明为下载接口，无code
+      if (response.data.code === undefined) {
+        return response.data
+      } else if (response.data.code !== 0) {
         Notification.error({
           title: response.data.message
         })
