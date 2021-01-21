@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="head-container">
       <Search />
-      <crudOperation>
+      <crudOperation :permission="permission">
         <el-button
           slot="left"
           class="filter-item"
@@ -63,6 +63,7 @@ export default {
     return CRUD({ title: '日志', url: 'api/logs' })
   },
   mixins: [presenter()],
+
   created() {
     this.crud.optShow = {
       add: false,
@@ -93,8 +94,8 @@ export default {
     },
     formatDate(row, column) {
       const date = new Date(parseInt(row.createTime))
-      console.log(row)
-      console.log(row.requestTime)
+      // console.log(row)
+      // console.log(row.requestTime)
       const Y = date.getFullYear() + '-'
       const M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-'
       const D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
