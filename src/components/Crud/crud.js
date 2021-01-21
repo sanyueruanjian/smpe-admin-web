@@ -347,6 +347,7 @@ function CRUD(options) {
     getQueryParams: function() {
       // 清除参数无值的情况
       Object.keys(crud.query).length !== 0 && Object.keys(crud.query).forEach(item => {
+        console.log(crud)
         if (crud.query[item] === null || crud.query[item] === '') crud.query[item] = undefined
         // 对creatime参数进行修改，createtime数组改为 startTime与endTime
         if (crud.query[item] !== undefined && item === 'createTime') {

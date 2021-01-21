@@ -332,7 +332,6 @@ export default {
     },
     // 打开编辑弹窗前做的操作
     [CRUD.HOOK.beforeToEdit](crud, form) {
-      console.log(form)
       this.getJobs(this.form.deptId)
       userRoles = []
       userJobs = []
