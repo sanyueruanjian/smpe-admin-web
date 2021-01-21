@@ -49,7 +49,11 @@
       />
       <el-table-column prop="description" label="描述" />
       <el-table-column prop="browser" label="浏览器" />
-      <el-table-column prop="createTime" label="创建日期" :formatter="formatDate" />
+      <el-table-column prop="createTime" label="创建日期">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="异常详情" width="100px">
         <template slot-scope="scope">
           <el-button

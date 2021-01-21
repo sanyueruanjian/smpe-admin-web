@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="head-container">
       <Search />
-      <crudOperation :permission="permission">
+      <crudOperation>
         <el-button
           slot="left"
           class="filter-item"
@@ -42,7 +42,11 @@
           <el-tag v-else type="danger">{{ scope.row.requestTime }}ms</el-tag>
         </template>
       </el-table-column>
-      <el-table-column prop="createTime" label="创建日期" width="180px" :formatter="formatDate" />
+      <el-table-column prop="createTime" label="创建日期" width="180px">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页组件-->
     <pagination />
@@ -91,18 +95,6 @@ export default {
         })
       }).catch(() => {
       })
-    },
-    formatDate(row, column) {
-      const date = new Date(parseInt(row.createTime))
-      // console.log(row)
-      // console.log(row.requestTime)
-      const Y = date.getFullYear() + '-'
-      const M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-'
-      const D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
-      const h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
-      const m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':'
-      const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
-      return Y + M + D + h + m + s
     }
   }
 }
