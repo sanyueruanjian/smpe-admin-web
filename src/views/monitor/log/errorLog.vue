@@ -111,7 +111,8 @@ export default {
     info(id) {
       this.dialog = true
       getErrDetail(id).then((res) => {
-        this.errorInfo = res.exception
+        // console.log(res, "zaizheli")
+        this.errorInfo = res.data.exceptionDetail
       })
     },
     confirmDelAll() {
