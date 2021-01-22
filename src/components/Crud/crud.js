@@ -133,7 +133,7 @@ function CRUD(options) {
         // 请求数据
         initData(crud.url, crud.getQueryParams()).then(res => {
           // console.log(123456)
-          console.log(res)
+          // console.log(res)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -347,7 +347,6 @@ function CRUD(options) {
     getQueryParams: function() {
       // 清除参数无值的情况
       Object.keys(crud.query).length !== 0 && Object.keys(crud.query).forEach(item => {
-        console.log(crud)
         if (crud.query[item] === null || crud.query[item] === '') crud.query[item] = undefined
         // 对creatime参数进行修改，createtime数组改为 startTime与endTime
         if (crud.query[item] !== undefined && item === 'createTime') {
@@ -755,7 +754,6 @@ function form(defaultForm) {
       }
     },
     beforeCreate() {
-      console.log(this.crud)
       this.crud = lookupCrud(this)
       this.crud.registerVM('form', this, 3)
     },
