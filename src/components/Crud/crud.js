@@ -133,7 +133,7 @@ function CRUD(options) {
         // 请求数据
         initData(crud.url, crud.getQueryParams()).then(res => {
           // console.log(123456)
-          // console.log(res)
+          console.log(res)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -755,6 +755,7 @@ function form(defaultForm) {
       }
     },
     beforeCreate() {
+      console.log(this.crud)
       this.crud = lookupCrud(this)
       this.crud.registerVM('form', this, 3)
     },
