@@ -118,6 +118,10 @@ export default {
       }
     }
   },
+  created() {
+    console.log(this.crud.form, '111')
+    console.log(this.crud, '222')
+  },
   methods: {
     getDeptDatas(tree, treeNode, resolve) {
       const params = { pid: tree.id }

@@ -20,5 +20,6 @@ import DateRangePicker from '@/components/DateRangePicker'
 export default {
   components: { rrOperation, DateRangePicker },
   mixins: [header()]
+
 }
 </script>
