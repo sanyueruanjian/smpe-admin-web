@@ -330,14 +330,14 @@ function CRUD(options) {
      * 通用导出
      */
     doExport() {
-      // console.log("sadsd")
+      console.log(crud.url, '通用导出')
       crud.downloadLoading = true
-      // console.log(download, "1")
       download(crud.url + '/download', crud.getQueryParams()).then(result => {
-        // console.log("sadsd111111,3")
+        console.log(result, '通用导出111')
         downloadFile(result, crud.title + '数据', 'xlsx')
         crud.downloadLoading = false
       }).catch(() => {
+        console.log('通用导出111')
         crud.downloadLoading = false
       })
     },

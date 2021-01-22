@@ -49,7 +49,11 @@
       />
       <el-table-column prop="description" label="描述" />
       <el-table-column prop="browser" label="浏览器" />
-      <el-table-column prop="createTime" label="创建日期" />
+      <el-table-column prop="createTime" label="创建日期">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="异常详情" width="100px">
         <template slot-scope="scope">
           <el-button
@@ -107,7 +111,8 @@ export default {
     info(id) {
       this.dialog = true
       getErrDetail(id).then((res) => {
-        this.errorInfo = res.exception
+        // console.log(res, "zaizheli")
+        this.errorInfo = res.data.exceptionDetail
       })
     },
     confirmDelAll() {
@@ -131,6 +136,16 @@ export default {
             })
         })
         .catch(() => {})
+    },
+    formatDate(row, column) {
+      const date = new Date(parseInt(row.createTime))
+      const Y = date.getFullYear() + '-'
+      const M = date.getMonth() + 1 < 10 ? '0' + (date.getMonth() + 1) + '-' : date.getMonth() + 1 + '-'
+      const D = date.getDate() < 10 ? '0' + date.getDate() + ' ' : date.getDate() + ' '
+      const h = date.getHours() < 10 ? '0' + date.getHours() + ':' : date.getHours() + ':'
+      const m = date.getMinutes() < 10 ? '0' + date.getMinutes() + ':' : date.getMinutes() + ':'
+      const s = date.getSeconds() < 10 ? '0' + date.getSeconds() : date.getSeconds()
+      return Y + M + D + h + m + s
     }
   }
 }
