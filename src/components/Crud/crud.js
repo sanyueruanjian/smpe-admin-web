@@ -120,6 +120,10 @@ function CRUD(options) {
     },
     // 搜索
     toQuery() {
+      if (!crud.query.createTime) {
+        crud.query.startTime = null
+        crud.query.endTime = null
+      }
       crud.page.page = 1
       crud.refresh()
     },
@@ -132,8 +136,6 @@ function CRUD(options) {
         crud.loading = true
         // 请求数据
         initData(crud.url, crud.getQueryParams()).then(res => {
-          // console.log(123456)
-          // console.log(res)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -330,14 +332,11 @@ function CRUD(options) {
      * 通用导出
      */
     doExport() {
-      console.log(crud.url, '通用导出')
       crud.downloadLoading = true
       download(crud.url + '/download', crud.getQueryParams()).then(result => {
-        console.log(result, '通用导出111')
         downloadFile(result, crud.title + '数据', 'xlsx')
         crud.downloadLoading = false
       }).catch(() => {
-        console.log('通用导出111')
         crud.downloadLoading = false
       })
     },
@@ -347,7 +346,6 @@ function CRUD(options) {
     getQueryParams: function() {
       // 清除参数无值的情况
       Object.keys(crud.query).length !== 0 && Object.keys(crud.query).forEach(item => {
-        console.log(crud)
         if (crud.query[item] === null || crud.query[item] === '') crud.query[item] = undefined
         // 对creatime参数进行修改，createtime数组改为 startTime与endTime
         if (crud.query[item] !== undefined && item === 'createTime') {
