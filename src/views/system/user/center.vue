@@ -9,7 +9,7 @@
           <div>
             <div style="text-align: center">
               <div class="el-upload">
-                <img :src="user.avatarName ? baseApi + '/avatar/' + user.avatarName : Avatar" title="点击上传头像" class="avatar" @click="toggleShow">
+                <img :src="user.avatarPath ? baseApi + '/api/file/download/' + user.avatarPath : Avatar" title="点击上传头像" class="avatar" @click="toggleShow">
                 <myUpload
                   v-model="show"
                   :headers="headers"
