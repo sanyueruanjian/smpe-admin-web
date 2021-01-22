@@ -12,7 +12,7 @@
       <div style="display: inline-block;">
         <el-button
           :loading="downloadLoading"
-          sizcheck-pere="mini"
+          size="mini"
           class="filter-item"
           type="warning"
           icon="el-icon-download"
@@ -21,13 +21,13 @@
       </div>
     </div>
     <!--表格渲染-->
-    <el-table v-loading="loading" :data="data" style="width: 100%;margin-top: -10px;">
+    <el-table ref="table" v-loading="loading" :data="data" style="width: 100%;margin-top: -10px;">
       <el-table-column :show-overflow-tooltip="true" prop="jobName" label="任务名称" />
       <el-table-column :show-overflow-tooltip="true" prop="beanName" label="Bean名称" />
       <el-table-column :show-overflow-tooltip="true" prop="methodName" label="执行方法" />
       <el-table-column :show-overflow-tooltip="true" prop="params" width="120px" label="参数" />
       <el-table-column :show-overflow-tooltip="true" prop="cronExpression" label="cron表达式" />
-      <el-table-column prop="createTime" label="异常详情" width="110px">
+      <el-table-column prop="exceptionDetail" label="异常详情" width="110px">
         <template slot-scope="scope">
           <el-button v-show="scope.row.exceptionDetail" size="mini" type="text" @click="info(scope.row.exceptionDetail)">查看详情</el-button>
         </template>
@@ -38,7 +38,11 @@
           <el-tag :type="scope.row.isSuccess ? 'success' : 'danger'">{{ scope.row.isSuccess ? '成功' : '失败' }}</el-tag>
         </template>
       </el-table-column>
-      <el-table-column :show-overflow-tooltip="true" prop="createTime" label="创建日期" />
+      <el-table-column :show-overflow-tooltip="true" prop="createTime" label="创建日期">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
     </el-table>
     <el-dialog :visible.sync="errorDialog" append-to-body title="异常详情" width="85%">
       <pre v-highlightjs="errorInfo"><code class="java" /></pre>

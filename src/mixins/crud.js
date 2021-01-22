@@ -61,7 +61,7 @@ export default {
         // 请求数据
         initData(this.url, this.getQueryParame()).then(data => {
           this.total = data.totalElements
-          this.data = data.content
+          this.data = data.data.records
           // time 毫秒后显示表格
           setTimeout(() => {
             this.loading = false
@@ -326,7 +326,7 @@ export default {
     downloadMethod() {
       this.beforeInit()
       this.downloadLoading = true
-      download(this.url + '/download', this.params).then(result => {
+      download(this.url + '/download', this.query).then(result => {
         this.downloadFile(result, this.title + '数据', 'xlsx')
         this.downloadLoading = false
       }).catch(() => {

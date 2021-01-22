@@ -70,7 +70,7 @@
       </div>
     </el-dialog>
     <!--表格渲染-->
-    <el-table ref="table" v-loading="crud.loading" :data="testMessage" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
+    <el-table ref="table" v-loading="crud.loading" :data="crud.data" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
       <el-table-column :selectable="checkboxT" type="selection" width="55" />
       <el-table-column :show-overflow-tooltip="true" prop="id" label="任务ID" />
       <el-table-column :show-overflow-tooltip="true" prop="jobName" label="任务名称" />
@@ -78,13 +78,17 @@
       <el-table-column :show-overflow-tooltip="true" prop="methodName" label="执行方法" />
       <el-table-column :show-overflow-tooltip="true" prop="params" label="参数" />
       <el-table-column :show-overflow-tooltip="true" prop="cronExpression" label="cron表达式" />
-      <el-table-column :show-overflow-tooltip="true" prop="jobName" width="90px" label="状态">
+      <el-table-column :show-overflow-tooltip="true" prop="isPuse" width="90px" label="状态">
         <template slot-scope="scope">
           <el-tag :type="scope.row.isPause ? 'warning' : 'success'">{{ scope.row.isPause ? '已暂停' : '运行中' }}</el-tag>
         </template>
       </el-table-column>
       <el-table-column :show-overflow-tooltip="true" prop="description" width="150px" label="描述" />
-      <el-table-column :show-overflow-tooltip="true" prop="createTime" width="136px" label="创建日期" />
+      <el-table-column :show-overflow-tooltip="true" prop="createTime" width="136px" label="创建日期">
+        <template slot-scope="scope">
+          <span>{{ parseTime(scope.row.createTime) }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="170px" align="center" fixed="right">
         <template slot-scope="scope"><el-button v-permission="['admin','timing:edit']" size="mini" style="margin-right: 3px;" type="text" @click="crud.toEdit(scope.row)">编辑</el-button>
           <el-button v-permission="['admin','timing:edit']" style="margin-left: -2px" type="text" size="mini" @click="execute(scope.row.id)">执行</el-button>
@@ -113,7 +117,7 @@
 </template>
 
 <script>
-import crudJob from '@/api/system/job'
+import crudJob from '@/api/system/timing'
 import Log from './log'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
@@ -137,7 +141,6 @@ export default {
         edit: ['admin', 'timing:edit'],
         del: ['admin', 'timing:del']
       },
-      isPause: 'asdasdasd',
       rules: {
         jobName: [
           { required: true, message: '请输入任务名称', trigger: 'blur' }
@@ -157,9 +160,7 @@ export default {
         personInCharge: [
           { required: true, message: '请输入负责人名称', trigger: 'blur' }
         ]
-      },
-      testMessage:
-        [{ id: `8`, jobName: '测试任务', beanName: '测试beanName', methodName: '测试methodName', params: '测试参数', cronExpression: '0 0 2 1 * ? * ', isPause: '', description: '任务描述', createTime: Date() }]
+      }
     }
   },
   methods: {
@@ -207,60 +208,7 @@ export default {
     checkboxT(row, rowIndex) {
       return row.id !== 1
     }
-  },
-  // 执行
-  execute(id) {
-    crudJob.execution(id).then(res => {
-      this.crud.notify('执行成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
-    }).catch(err => {
-      console.log(err.response.data.message)
-    })
-  },
-  // 改变状态
-  updateStatus(id, status) {
-    if (status === '恢复') {
-      this.updateParams(id)
-    }
-    crudJob.updateIsPause(id).then(res => {
-      this.crud.toQuery()
-      this.crud.notify(status + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
-    }).catch(err => {
-      console.log(err.response.data.message)
-    })
-  },
-  updateParams(id) {
-    console.log(id)
-  },
-  delMethod(id) {
-    this.delLoading = true
-    crudJob.del([id]).then(() => {
-      this.delLoading = false
-      this.$refs[id].doClose()
-      this.crud.dleChangePage(1)
-      this.crud.delSuccessNotify()
-      this.crud.toQuery()
-    }).catch(() => {
-      this.delLoading = false
-      this.$refs[id].doClose()
-    })
-  },
-  // 显示日志
-  doLog() {
-    this.$refs.log.dialog = true
-    this.$refs.log.doInit()
-  },
-  checkboxT(row, rowIndex) {
-    return row.id !== 1
   }
 }
 </script>
 
-<style rel="stylesheet/scss" lang="scss" scoped>
-  ::v-deep .el-input-number .el-input__inner {
-    text-align: left;
-  }
-  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
-    height: 30px;
-    line-height: 30px;
-  }
-</style>
