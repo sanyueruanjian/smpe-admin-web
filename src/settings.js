@@ -3,6 +3,7 @@ module.exports = {
    * @description 网站标题
    */
   title: 'SMPE-ADMIN',
+  logoTitle: 'SMPE-ADMIN后台管理',
   /**
    * @description 是否显示 tagsView
    */

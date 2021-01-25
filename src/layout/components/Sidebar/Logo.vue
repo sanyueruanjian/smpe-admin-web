@@ -15,6 +15,7 @@
 
 <script>
 import Logo from '@/assets/images/logo.png'
+import Setting from '@/settings'
 export default {
   name: 'SidebarLogo',
   props: {
@@ -25,7 +26,7 @@ export default {
   },
   data() {
     return {
-      title: '三月软件-后台管理',
+      title: Setting.logoTitle,
       logo: Logo
     }
   }
