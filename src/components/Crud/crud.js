@@ -120,9 +120,8 @@ function CRUD(options) {
     },
     // 搜索
     toQuery() {
-      if (!crud.query.createTime) {
-        crud.query.startTime = null
-        crud.query.endTime = null
+      if (crud.getQueryParams().startTime) {
+        crud.query.createTime = null
       }
       crud.page.page = 1
       crud.refresh()
@@ -149,6 +148,9 @@ function CRUD(options) {
             crud.loading = false
             callVmHook(crud, CRUD.HOOK.afterRefresh)
           }, crud.time)
+          // 清除上次搜索的条件
+          crud.query.startTime = null
+          crud.query.endTime = null
           resolve(data)
         }).catch(err => {
           crud.loading = false
