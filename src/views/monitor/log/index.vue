@@ -73,7 +73,8 @@ export default {
       add: false,
       edit: false,
       del: false,
-      download: true
+      download: true,
+      reset: true
     }
   },
   methods: {
