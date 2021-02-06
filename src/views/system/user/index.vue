@@ -94,8 +94,8 @@
                 />
               </el-select>
             </el-form-item>
-            <el-form-item label="电话" prop="phone">
-              <el-input v-model.number="form.phone" />
+            <el-form-item label="邮箱" prop="email">
+              <el-input v-model="form.email" />
             </el-form-item>
             <el-form-item label="角色" prop="roles">
               <el-select
@@ -114,6 +114,9 @@
                   :value="item.id"
                 />
               </el-select>
+            </el-form-item>
+            <el-form-item label="电话" prop="phone">
+              <el-input v-model.number="form.phone" />
             </el-form-item>
             <el-form-item label="性别">
               <el-radio-group v-model="form.gender" style="margin-bottom: 0;">
@@ -149,6 +152,7 @@
             </template>
           </el-table-column>
           <el-table-column :show-overflow-tooltip="true" prop="phone" width="100" label="电话" />
+          <el-table-column :show-overflow-tooltip="true" width="135" prop="email" label="邮箱" />
           <el-table-column :show-overflow-tooltip="true" prop="dept" label="部门">
             <template slot-scope="scope">
               <div>{{ scope.row.dept.name }}</div>
@@ -247,6 +251,10 @@ export default {
         nickName: [
           { required: true, message: '请输入用户昵称', trigger: 'blur' },
           { min: 2, max: 20, message: '长度在 2 到 20 个字符', trigger: 'blur' }
+        ],
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
         ],
         phone: [
           { required: true, trigger: 'blur', validator: validPhone }
