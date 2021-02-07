@@ -120,6 +120,9 @@ function CRUD(options) {
     },
     // 搜索
     toQuery() {
+      if (crud.getQueryParams().startTime) {
+        crud.query.createTime = null
+      }
       crud.page.page = 1
       crud.refresh()
     },
@@ -132,8 +135,6 @@ function CRUD(options) {
         crud.loading = true
         // 请求数据
         initData(crud.url, crud.getQueryParams()).then(res => {
-          // console.log(123456)
-          // console.log(res)
           const table = crud.getTable()
           if (table && table.lazy) { // 懒加载子节点数据，清掉已加载的数据
             table.store.states.treeData = {}
@@ -147,6 +148,9 @@ function CRUD(options) {
             crud.loading = false
             callVmHook(crud, CRUD.HOOK.afterRefresh)
           }, crud.time)
+          // 清除上次搜索的条件
+          crud.query.startTime = null
+          crud.query.endTime = null
           resolve(data)
         }).catch(err => {
           crud.loading = false

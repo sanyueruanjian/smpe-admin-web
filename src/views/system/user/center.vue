@@ -9,7 +9,7 @@
           <div>
             <div style="text-align: center">
               <div class="el-upload">
-                <img :src="user.avatarName ? baseApi + '/avatar/' + user.avatarName : Avatar" title="点击上传头像" class="avatar" @click="toggleShow">
+                <img :src="user.avatarPath ? baseApi + '/api/file/download/' + user.avatarPath : Avatar" title="点击上传头像" class="avatar" @click="toggleShow">
                 <myUpload
                   v-model="show"
                   :headers="headers"
@@ -156,6 +156,8 @@ export default {
   },
   created() {
     this.form = { id: this.user.id, nickName: this.user.nickName, gender: this.user.gender, phone: this.user.phone }
+    // 转换性别数据类型
+    this.transGender()
     store.dispatch('GetInfo').then(() => {})
   },
   methods: {
@@ -175,14 +177,21 @@ export default {
     cropUploadSuccess(jsonData, field) {
       store.dispatch('GetInfo').then(() => {})
     },
+    // 转化性别数据类型
+    transGender() {
+      this.form.gender = this.form.gender === false ? '男' : '女'
+    },
     doSubmit() {
       if (this.$refs['form']) {
         this.$refs['form'].validate((valid) => {
           if (valid) {
             this.saveLoading = true
+            this.form.gender = !(this.form.gender === '男')
             editUser(this.form).then(() => {
               this.editSuccessNotify()
               store.dispatch('GetInfo').then(() => {})
+              // 性别数据类型转换
+              this.transGender()
               this.saveLoading = false
             }).catch(() => {
               this.saveLoading = false
